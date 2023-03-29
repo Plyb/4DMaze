@@ -101,11 +101,19 @@
     <ClInclude Include="TransformedShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BrickShader.cpp" />
+    <ClCompile Include="BrickTexture.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Tesseract.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="brickShader.frag" />
+    <None Include="brickShader.vert" />
+    <None Include="objShader.frag" />
+    <None Include="objShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

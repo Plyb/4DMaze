@@ -9,7 +9,7 @@ out vec4 FragColor;
 uniform sampler3D tex;
 uniform float proportion;
 
-const float lightIntensity = 10.0f;
+const float lightIntensity = 1.0f;
 
 void main() {
 

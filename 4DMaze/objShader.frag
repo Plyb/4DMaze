@@ -6,7 +6,7 @@ in vec3 normal;
 in vec3 fragLightPos;
 in vec3 pos;
 
-const float lightIntensity = 5.0f;
+const float lightIntensity = 1.0f;
 
 void main()
 {
