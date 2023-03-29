@@ -12,7 +12,7 @@ public:
 
 	Camera(Scene& scene) : scene(scene) {}
 
-	glm::vec4 pos = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
+	glm::vec4 pos = glm::vec4(0.5f, 0.0f, 0.5f, 0.5f);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	float yaw = 0.0f;
@@ -33,7 +33,7 @@ private:
 	glm::vec4 computeFront();
 	glm::vec4 computeSide();
 
-	bool isFreeSpace(glm::vec4 pos);
-	bool intersectsTesseract(glm::vec4 pos, Tesseract& tesseract);
+	glm::vec4 isFreeSpace(glm::vec4 pos, glm::vec4 stepDir);
+	glm::vec4 intersectsTesseract(glm::vec4 pos, Tesseract& tesseract, glm::vec4 stepDir);
 	bool insersectsAlien(glm::vec4 pos);
 };

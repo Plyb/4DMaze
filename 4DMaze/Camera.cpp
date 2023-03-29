@@ -8,23 +8,22 @@ bool Camera::update(float deltaTime, std::function<bool(int)> keyPressed) {
 	float cameraSpeed = deltaTime * CAMERA_SPEED;
 	const float ROT_SPEED = 3.0f;
 
-	glm::vec4 newPos = pos;
+	glm::vec4 stepDir = glm::vec4(0, 0, 0, 0);
 	if (keyPressed(GLFW_KEY_W)) {
-		newPos += cameraSpeed * front;
+		stepDir += cameraSpeed * front;
 	}
 	if (keyPressed(GLFW_KEY_S)) {
-		newPos -= cameraSpeed * front;
+		stepDir -= cameraSpeed * front;
 	}
 	if (keyPressed(GLFW_KEY_A)) {
-		newPos -= side * cameraSpeed;
+		stepDir -= side * cameraSpeed;
 	}
 	if (keyPressed(GLFW_KEY_D)) {
-		newPos += side * cameraSpeed;
+		stepDir += side * cameraSpeed;
 	}
+	glm::vec4 newPos = pos + stepDir;
 
-	if (isFreeSpace(newPos) || true) {
-		pos = newPos;
-	}
+	pos = isFreeSpace(newPos, stepDir);
 	if (insersectsAlien(newPos)) {
 		pos = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
 		double alienCoord = scene.mazeSize * 2 - 1.5;
@@ -83,21 +82,43 @@ glm::vec4 Camera::computeSide() {
 	));
 }
 
-bool Camera::isFreeSpace(glm::vec4 pos) {
+glm::vec4 Camera::isFreeSpace(glm::vec4 pos, glm::vec4 stepDir) {
+	glm::vec4 newPos = pos;
 	for (int i = 0; i < scene.tesseracts.size(); i++) {
-		if (intersectsTesseract(pos, scene.tesseracts[i])) {
-			return false;
+		glm::vec4 translation = intersectsTesseract(pos, scene.tesseracts[i], stepDir);
+		if (translation != glm::vec4(0, 0, 0, 0)) {
+			newPos += translation;
 		}
 	}
-	return true;
+	return newPos;
 }
 
-bool Camera::intersectsTesseract(glm::vec4 pos, Tesseract& tesseract) {
+glm::vec4 Camera::intersectsTesseract(glm::vec4 pos, Tesseract& tesseract, glm::vec4 stepDir) {
+	glm::vec4 translation = glm::vec4(0, 0, 0, 0);
 	Vec4 tessCenter = tesseract.lowestCorner + Vec4(0.5f, 0.5f, 0.5f, 0.5f);
-	return abs(pos.x - tessCenter.x) < 1.0f
-		&& abs(pos.y - tessCenter.y) < 1.0f
-		&& abs(pos.z - tessCenter.z) < 1.0f
-		&& abs(pos.w - tessCenter.w) < 1.0f;
+	const float allowedDistance = 0.75f;
+
+	double adx = abs(pos.x - tessCenter.x);
+	double ady = abs(pos.y - tessCenter.y);
+	double adz = abs(pos.z - tessCenter.z);
+	double adw = abs(pos.w - tessCenter.w);
+	if (adx < allowedDistance && ady < allowedDistance
+		&& adz < allowedDistance && adw < allowedDistance
+	) {
+		if (adx >= ady && adx >= adz && adx >= adw) {
+			double sign = (pos.x - tessCenter.x) / adx;
+			translation.x = adx == 0 ? 0 : (sign * allowedDistance) - (pos.x - tessCenter.x);
+		}
+		if (ady >= adx && ady >= adz && ady >= adw) {
+			double sign = (pos.y - tessCenter.y) / ady;
+			translation.y = ady == 0 ? 0 : (sign * allowedDistance) - (pos.y - tessCenter.y);
+		}
+		if ((adz >= adx && adz >= ady && adz >= adw) || (adw >= adx && adw >= ady && adw >= adz)) {
+			translation.z = -CAMERA_SPEED * stepDir.z;
+			translation.w = -CAMERA_SPEED * stepDir.w;
+		}
+	}
+	return translation;
 }
 
 bool Camera::insersectsAlien(glm::vec4 pos) {

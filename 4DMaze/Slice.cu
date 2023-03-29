@@ -171,40 +171,6 @@ inline std::vector<Triangle> getTriangles(const std::vector<Tetrahedron>& tetrah
 	free(triangles);
 
 	return triangleVec;
-
-	/*std::vector<Triangle> triangleVec(triangles, triangles + trianglesSize);
-	allTriangles.insert(allTriangles.end(), triangleVec.begin(), triangleVec.end());
-
-
-	free(allTris);
-
-
-	std::vector<Triangle> allTriangles;
-	for (int i = 0; i < tetrahedra.size(); i++) {
-		Tetrahedron tetrahedron = tetrahedra[i];
-
-
-		Triangle* devTriangles = 0;
-		checkCudaErrors(cudaMalloc((void**)&devTriangles, sizeof(Triangle) * 4));
-		unsigned int* devTrianglesSize;
-		checkCudaErrors(cudaMalloc((void**)&devTrianglesSize, sizeof(unsigned int)));
-		intersect<<<1, 1>>>(devTriangles, devTrianglesSize, tetrahedron, hyperplane);
-		checkCudaErrors(cudaGetLastError());
-		checkCudaErrors(cudaDeviceSynchronize());
-
-		unsigned int trianglesSize;
-		checkCudaErrors(cudaMemcpy(&trianglesSize, devTrianglesSize, sizeof(unsigned int), cudaMemcpyDeviceToHost));
-		Triangle* triangles = (Triangle*)malloc(sizeof(Triangle) * trianglesSize);
-		checkCudaErrors(cudaMemcpy(triangles, devTriangles, sizeof(Triangle) * trianglesSize, cudaMemcpyDeviceToHost));
-
-
-		std::vector<Triangle> triangleVec(triangles, triangles + trianglesSize);
-		allTriangles.insert(allTriangles.end(), triangleVec.begin(), triangleVec.end());
-
-		cudaFree(devTriangles);
-		cudaFree(devTrianglesSize);
-	}
-	return allTriangles;*/
 }
 
 
